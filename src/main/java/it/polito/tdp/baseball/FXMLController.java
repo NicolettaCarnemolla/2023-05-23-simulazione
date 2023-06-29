@@ -49,19 +49,28 @@ public class FXMLController {
     
     @FXML
     void doCalcolaConnesse(ActionEvent event) {
-    	this.txtResult.appendText("Ci sono "+model.getConnessesize()+" componenti connesse.");
+    	this.txtResult.appendText("\nCi sono "+model.getConnessesize()+" componenti connesse.");
     }
 
     
     
     @FXML
     void doCreaGrafo(ActionEvent event) {
-    	int anno = Integer.parseInt(this.txtYear.getText());
+    	int anno =0;
+    	
+    	double salario = 0.0;
+    	
+    	try {
+    		anno = Integer.parseInt(this.txtYear.getText());
+    		salario = Double.parseDouble(this.txtSalary.getText())*1000000;
+    	}catch(NumberFormatException e) {
+    		this.txtResult.setText("Il salario e l'anno devono essere dei valori numerici");
+    		return;
+    	}
     	if(!model.getAllYears().contains(anno)) {
     		this.txtResult.setText("Inserisci un anno valido!");
     	}
-    	double salariounitario = Double.parseDouble(this.txtSalary.getText());
-    	double salario = salariounitario*1000000;
+    	
     	model.creaGrafo(anno, salario);
     	this.txtResult.setText("Grafo creato!\nCi sono "+model.getVertexsize()+" vertici. \nCi sono "+model.getEdgessize()+" archi.");
     	this.btnConnesse.setDisable(false);

@@ -50,17 +50,28 @@ public class BaseballDAO {
 	 * Partiamo dai vertici:
 	 * @return
 	 */
-	public List<People> readAllPlayersWithCondition(int anno, double salario){
-		String sql = "SELECT DISTINCT p.* "
+	
+	/*Altra versione:
+	 * Fa la stessa cosa ma non va bene 
+	 * per il database utilizzato
+	 * "SELECT DISTINCT p.* "
 				+ "FROM salaries s, people p "
 				+ "WHERE s.playerID=p.playerID AND s.salary>? and s.year=?";
+	 */
+	public List<People> readAllPlayersWithCondition(int anno, double salario){
+		//Versione corretta con SUM(salary)
+		String sql = "SELECT p.*, SUM(s.salary) as salaryTot "
+				+ "FROM salaries s, people p "
+				+ "WHERE s.playerID=p.playerID and s.year=? "
+				+ "GROUP BY p.playerID "
+				+ "HAVING salaryTot>?";
 		List<People> result = new ArrayList<People>();
 
 		try {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
-			st.setDouble(1, salario);
-			st.setInt(2, anno);
+			st.setDouble(2, salario);
+			st.setInt(1, anno);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
@@ -130,7 +141,37 @@ public class BaseballDAO {
 		}
 	}
 	
-	
+	/**
+	 * Metodo che restituisce un double per la ricorsione
+	 * @return
+	 */
+	public Double getSalario(People p, int anno){
+		String sql = "SELECT s.playerID, SUM(s.salary) AS salary "
+				+ "FROM salaries s "
+				+ "WHERE s.playerID = ? AND s.year= ? "
+				+ "GROUP BY s.playerID";
+		double Result = 0.0;
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, p.getPlayerID());
+			st.setInt(2, anno);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				Result = rs.getDouble("salary");
+			}
+
+			conn.close();
+			return Result;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
+	}
 	public List<People> readAllPlayers(){
 		String sql = "SELECT * "
 				+ "FROM people";

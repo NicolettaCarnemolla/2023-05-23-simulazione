@@ -13,6 +13,9 @@ public class TestBaseballDAO {
 		List<People> players = dao.readAllPlayers();
 		
 		System.out.println(players.size());
+		List<People> p = dao.readAllPlayersWithCondition(2000, 5000000);
+		System.out.println(p.size());
+
 	}
 
 }

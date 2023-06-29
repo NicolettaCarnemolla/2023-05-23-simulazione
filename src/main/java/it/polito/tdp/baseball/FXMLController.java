@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-
+import it.polito.tdp.baseball.model.Grado_associato;
 import it.polito.tdp.baseball.model.Model;
 import it.polito.tdp.baseball.model.People;
 import javafx.event.ActionEvent;
@@ -49,7 +49,7 @@ public class FXMLController {
     
     @FXML
     void doCalcolaConnesse(ActionEvent event) {
-    	this.txtResult.appendText("\nCi sono "+model.getConnessesize()+" componenti connesse.");
+    	this.txtResult.appendText("\nCi sono "+model.getConnessesize()+" componenti connesse.\n");
     }
 
     
@@ -75,19 +75,33 @@ public class FXMLController {
     	this.txtResult.setText("Grafo creato!\nCi sono "+model.getVertexsize()+" vertici. \nCi sono "+model.getEdgessize()+" archi.");
     	this.btnConnesse.setDisable(false);
     	this.btnGradoMassimo.setDisable(false);
+    	this.btnDreamTeam.setDisable(false);
     }
 
     
     @FXML
     void doDreamTeam(ActionEvent event) {
 
+    	this.model.getDreamTeam(Integer.parseInt(this.txtYear.getText()));
+    	this.txtResult.appendText("\nIl dream team ha un salario di: "+model.getsala());
+    	this.txtResult.appendText("\nI giocatori sono\n:");
+    	List<People> dreamteam = this.model.getDream();
+    	for(People p : dreamteam) {
+    		this.txtResult.appendText(p +"\n");
+    	}
+    	
     }
 
     
     @FXML
     void doGradoMassimo(ActionEvent event) {
 
-    	this.txtResult.setText("Nodo di grado max: \n"+model.getGradoMax());
+    	List<Grado_associato> grado = model.getGradoMax();
+    	this.txtResult.setText("Nodo di grado max: \n");
+    	for(Grado_associato g : grado) {
+    		this.txtResult.appendText(g.getP()+ " "+g.getGrado()+"\n");
+    	}
+    	
     }
 
     

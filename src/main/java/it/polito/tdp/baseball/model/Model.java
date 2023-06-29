@@ -19,6 +19,8 @@ public class Model {
 	Graph<People,DefaultEdge> grafo;
 	List<People> vertici;
 	Map<String,People> idMap;
+	private ArrayList<People> dreamTeam;
+	private double salarioDreamTeam;
 	
 	public List<Integer> getAllYears(){
 		return dao.readAllYears();
@@ -54,6 +56,8 @@ public class Model {
 		List<Grado_associato> people_grado = new ArrayList<>();
 		for(People p : vertici) {
 			int grado= grafo.degreeOf(p);
+			//Oppure
+			//int grado = Graphs.neighborListOf(this.grafo,p).size();
 			if(grado> max) {
 				people_grado.clear();
 				max = grado;
@@ -72,4 +76,62 @@ public class Model {
 		ConnectivityInspector<People, DefaultEdge> connesse = new ConnectivityInspector<>(this.grafo);
 		return connesse.connectedSets().size();
 	}
-}
+	
+	public void getDreamTeam(int anno) {
+		this.dreamTeam = new ArrayList<People>();
+		this.salarioDreamTeam = 0.0;
+		List<People> rimanenti = new ArrayList<>(this.grafo.vertexSet());
+		List<People> playersinattivi = new ArrayList<>(this.grafo.vertexSet());
+
+		
+		ricorsione(anno,new ArrayList<People>(), rimanenti);
+			
+		}
+	
+
+	private void ricorsione(int anno,ArrayList<People> parziale, List<People> rimanenti ) {
+		// TODO Auto-generated method stub
+		//Condizione di terminazione
+		if(rimanenti.isEmpty()) {
+			double salario = getSalarioTotale(parziale,anno);
+			if(salario > this.salarioDreamTeam) {
+				this.salarioDreamTeam = salario;
+				this.dreamTeam = new ArrayList<>(parziale);
+			}
+			return;
+		}
+		
+		//Aggiungiamo giocatori:
+		List<People> compagnisquadra = Graphs.neighborListOf(this.grafo, rimanenti.get(0));
+		compagnisquadra.add(rimanenti.get(0));
+		List<People> nuovorimanenti = new ArrayList<>(rimanenti);
+		nuovorimanenti.removeAll(compagnisquadra);
+		
+		for(People p : compagnisquadra) {
+			parziale.add(p);
+			nuovorimanenti.removeAll(Graphs.neighborListOf(grafo, p));
+			nuovorimanenti.remove(p);
+			ricorsione(anno,parziale,nuovorimanenti);
+			parziale.remove(parziale.size()-1);
+		}
+	}
+
+	private double getSalarioTotale(ArrayList<People> players, int anno) {
+		// TODO Auto-generated method stub
+		double salariotot = 0.0;
+		for(People p : players) {
+			double salario = this.dao.getSalario(p, anno);
+			salariotot += salario;
+		}
+		return salariotot;
+	}
+	public List<People> getDream(){
+		return this.dreamTeam;
+		
+	}
+	
+	public double getsala() {
+		return salarioDreamTeam;
+		
+	}
+ }

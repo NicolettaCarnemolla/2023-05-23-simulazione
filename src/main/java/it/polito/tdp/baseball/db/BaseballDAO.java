@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.polito.tdp.baseball.model.Appearances;
-import it.polito.tdp.baseball.model.Arco;
+
 import it.polito.tdp.baseball.model.People;
 import it.polito.tdp.baseball.model.Team;
 

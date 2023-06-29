@@ -49,14 +49,23 @@ public class FXMLController {
     
     @FXML
     void doCalcolaConnesse(ActionEvent event) {
-    	
+    	this.txtResult.appendText("Ci sono "+model.getConnessesize()+" componenti connesse.");
     }
 
     
     
     @FXML
     void doCreaGrafo(ActionEvent event) {
-    	
+    	int anno = Integer.parseInt(this.txtYear.getText());
+    	if(!model.getAllYears().contains(anno)) {
+    		this.txtResult.setText("Inserisci un anno valido!");
+    	}
+    	double salariounitario = Double.parseDouble(this.txtSalary.getText());
+    	double salario = salariounitario*1000000;
+    	model.creaGrafo(anno, salario);
+    	this.txtResult.setText("Grafo creato!\nCi sono "+model.getVertexsize()+" vertici. \nCi sono "+model.getEdgessize()+" archi.");
+    	this.btnConnesse.setDisable(false);
+    	this.btnGradoMassimo.setDisable(false);
     }
 
     
@@ -69,6 +78,7 @@ public class FXMLController {
     @FXML
     void doGradoMassimo(ActionEvent event) {
 
+    	this.txtResult.setText("Nodo di grado max: \n"+model.getGradoMax());
     }
 
     

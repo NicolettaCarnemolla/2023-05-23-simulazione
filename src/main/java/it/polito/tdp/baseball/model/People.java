@@ -184,7 +184,7 @@ public class People {
 
 	@Override
 	public String toString() {
-		return nameFirst + " " + nameLast;
+		return playerID + " "+ nameFirst + " " + nameLast;
 	}
     
     
